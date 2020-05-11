@@ -11,7 +11,8 @@ var divChatBox = $('#divChatbox');
 
 // Funcion para renderizar usuarios
 function renderizarUsuarios(personas) {
-	console.log(personas);
+
+    $('.box-title small').text(params.get('sala'));
 
 	var html = '';
 	html += '<li>';
