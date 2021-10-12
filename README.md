@@ -7,3 +7,10 @@ Recuerden que deben de reconstruir los módulos de node con el comando
 ```
 npm install
 ```
+
+Para correr el proyecto en localhost
+
+```
+npm run dev
+```
+

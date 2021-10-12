@@ -1,133 +1,180 @@
-var params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
-var nombre = params.get('nombre');
-var sala = params.get('sala');
+const nombre = params.get("nombre");
+const sala = params.get("sala");
 
 // Referencias de jQuery
-var divUsuarios = $('#divUsuarios');
-var formEnviar = $('#formEnviar');
-var txtMensaje = $('#txtMensaje');
-var divChatBox = $('#divChatbox');
+const divUsuarios = $("#divUsuarios");
+const formEnviar = $("#formEnviar");
+const txtMensaje = $("#txtMensaje");
+const divChatBox = $("#divChatbox");
 
 // Funcion para renderizar usuarios
 function renderizarUsuarios(personas) {
+    $(".box-title small").text(sala);
 
-    $('.box-title small').text(params.get('sala'));
+    let html = "";
 
-	var html = '';
-	html += '<li>';
-	html +=
-		'<a href="javascript:void(0)" class="active">Chat de <span> ' +
-		params.get('sala') +
-		'</span></a>';
-	html += '</li>;';
+    html += `
+		<li>
+			<a href="javascript:void(0)" class="active">
+				Chat de <span>${sala}</span>
+			</a>
+	 	</li>
+	`;
 
-	for (var i = 0; i < personas.length; i++) {
-		html += '<li>';
-		html +=
-			'<a data-id="' +
-			personas[i].id +
-			'" href="javascript:void(0)"><img src="assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>' +
-			personas[i].nombre +
-			'<small class="text-success">online</small></span></a>';
-		html += '</li>';
-	}
+    personas.map(({ id, nombre }) => {
+        html += `
+			<li>
+				<a data-id="${id}" href="javascript:void(0)">
+					<img src="assets/images/users/1.jpg" alt="user-img" class="img-circle">
+					<span>${nombre} <small class="text-success">online</small></span>
+				</a>
+			</li>
+		`;
+    });
 
-	divUsuarios.html(html);
+    divUsuarios.html(html);
 }
 
 // Funcion para renderizar mensajes
-function renderizarMensajes(mensaje, yo) {
-	var html = '';
-	var fecha = new Date(mensaje.fecha);
-	var hora = fecha.getHours() + ':' + fecha.getMinutes();
+function renderizarMensajes(msg, yo) {
 
-	var adminClass = 'info';
-	if (mensaje.nombre === 'Administrador') {
-		adminClass = 'danger';
+	let {fecha, nombre, mensaje} = msg
+    let html = "";
+    let date = new Date(fecha);
+    let hora = date.getHours() + ":" + date.getMinutes();
+
+    let adminClass = "info";
+    if (nombre === "Administrador") {
+        adminClass = "danger";
+    }
+
+    } else {
+        html += '<li class="animated fadeIn">';
+        if (nombre !== "Administrador") {
+            html += '	<div class="chat-img">';
+            html += '		<img src="assets/images/users/1.jpg" alt="user" />';
+            html += "	</div>";
+        }
+        html += '	<div class="chat-content">';
+        html += "		<h5>" + nombre + "</h5>";
+        html +=
+            '		<div class="box bg-light-' +
+            adminClass +
+            '">' +
+            mensaje +
+            "</div>";
+        html += "	</div>";
+        html += '	<div class="chat-time">' + hora + "</div>";
+        html += "</li>;";
 	}
-
+	
 	if (yo) {
-		html += '<li class="reverse">';
-		html += '<div class="chat-content">';
-		html += '<h5>' + mensaje.nombre + '</h5>';
-		html += '<div class="box bg-light-inverse">' + mensaje.mensaje + '</div>';
-		html += '</div>';
-		html += '<div class="chat-img">';
-		html += '<img src="assets/images/users/5.jpg" alt="user" />';
-		html += '</div>';
-		html += '<div class="chat-time">' + hora + '</div>';
-		html += '</li>;';
+
+		html += `
+		   <li class="reverse">
+				<div class="chat-content">
+					<h5>${nombre}</h5>
+					<div class="box bg-light-inverse">${mensaje}</div>
+				</div>
+				<div class="chat-img">
+					<img src="assets/images/users/5.jpg" alt="user" />
+				</div>
+         		<div class="chat-time">${hora}</div>
+          </li>
+		`;
+
 	} else {
-		html += '<li class="animated fadeIn">';
-		if (mensaje.nombre !== 'Administrador') {
-			html += '	<div class="chat-img">';
-			html += '		<img src="assets/images/users/1.jpg" alt="user" />';
-			html += '	</div>';
-		}
-		html += '	<div class="chat-content">';
-		html += '		<h5>' + mensaje.nombre + '</h5>';
-		html +=
-			'		<div class="box bg-light-' +
-			adminClass +
-			'">' +
-			mensaje.mensaje +
-			'</div>';
-		html += '	</div>';
-		html += '	<div class="chat-time">' + hora + '</div>';
-		html += '</li>;';
+
+		let isAdmin = `
+			<div class="chat-img">
+				<img src="assets/images/users/1.jpg" alt="user" />
+			</div>";
+		`
+		let notAdmin = `
+		      	<div class="chat-content">
+        		<h5>${nombre}</h5>
+            		<div class="box bg-light- 
+            adminClass 
+            "> 
+            mensaje 
+            "</div>"
+        "	</div>"
+        	<div class="chat-time">  hora  "</div>"
+        "</li>"
+		`
+
+
+		html += `
+			<li class="animated fadeIn">
+
+			${nombre === 'Administrador' ? isAdmin  }
+
+			<div class="chat-content">
+        		<h5> + nombre + </h5>
+            	<div class="box bg-light-${adminClass}">
+           			${mensaje}
+            	</div>
+			</div>
+        	<div class="chat-time"> hora "</div>"
+        "</li>"
+		`;
+
 	}
 
-	divChatBox.append(html);
+
+
+    divChatBox.append(html);
 }
 
 function scrollBottom() {
-	// selectors
-	var div = $('#divChatbox');
+    // selectors
+    var div = $("#divChatbox");
 
-	var newMessage = div.children('li:last-child');
+    var newMessage = div.children("li:last-child");
 
-	// heights
-	var clientHeight = div.prop('clientHeight');
-	var scrollTop = div.prop('scrollTop');
-	var scrollHeight = div.prop('scrollHeight');
-	var newMessageHeight = newMessage.innerHeight();
-	var lastMessageHeight = newMessage.prev().innerHeight() || 0;
+    // heights
+    var clientHeight = div.prop("clientHeight");
+    var scrollTop = div.prop("scrollTop");
+    var scrollHeight = div.prop("scrollHeight");
+    var newMessageHeight = newMessage.innerHeight();
+    var lastMessageHeight = newMessage.prev().innerHeight() || 0;
 
-	if (
-		clientHeight + scrollTop + newMessageHeight + lastMessageHeight >=
-		scrollHeight
-	) {
-		div.scrollTop(scrollHeight);
-	}
+    if (
+        clientHeight + scrollTop + newMessageHeight + lastMessageHeight >=
+        scrollHeight
+    ) {
+        div.scrollTop(scrollHeight);
+    }
 }
 
 // Listeners
-divUsuarios.on('click', 'a', (e) => {
-	var id = e.currentTarget.dataset['id'];
+divUsuarios.on("click", "a", e => {
+    var id = e.currentTarget.dataset["id"];
 
-	if (id) {
-		console.log(id);
-	}
+    if (id) {
+        console.log(id);
+    }
 });
 
-formEnviar.on('submit', function (e) {
-	e.preventDefault();
+formEnviar.on("submit", function (e) {
+    e.preventDefault();
 
-	if (txtMensaje.val().trim().length === 0) {
-		return;
-	}
+    if (txtMensaje.val().trim().length === 0) {
+        return;
+    }
 
-	socket.emit(
-		'crearMensaje',
-		{
-			nombre: nombre,
-			mensaje: txtMensaje.val(),
-		},
-		function (mensaje) {
-			txtMensaje.val('').focus();
-			renderizarMensajes(mensaje, true);
-			scrollBottom();
-		}
-	);
+    socket.emit(
+        "crearMensaje",
+        {
+            nombre: nombre,
+            mensaje: txtMensaje.val()
+        },
+        function (mensaje) {
+            txtMensaje.val("").focus();
+            renderizarMensajes(mensaje, true);
+            scrollBottom();
+        }
+    );
 });

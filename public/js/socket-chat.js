@@ -1,15 +1,15 @@
-var socket = io();
+const socket = io();
 
-var params = new URLSearchParams(window.location.search);
+const paramsChat = new URLSearchParams(window.location.search);
 
-if (!params.has('nombre') || !params.has('sala')) {
+if (!paramsChat.has('nombre') || !paramsChat.has('sala')) {
 	window.location = 'index.html';
 	throw new Error('El nombre y sala son necesarios');
 }
 
-var usuario = {
-	nombre: params.get('nombre'),
-	sala: params.get('sala'),
+const usuario = {
+	nombre: paramsChat.get('nombre'),
+	sala: paramsChat.get('sala'),
 };
 
 socket.on('connect', function () {
@@ -27,7 +27,6 @@ socket.on('disconnect', function () {
 
 // Escuchar información
 socket.on('crearMensaje', function (mensaje) {
-	// console.log('Servidor:', mensaje);
     renderizarMensajes(mensaje, false);
     scrollBottom();
 });
